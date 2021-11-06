@@ -7,7 +7,6 @@ class MainPageData {
   final String? searchCategory;
   final String searchText;
 
-//todo try to delete required and change copyWith
   MainPageData(this.movieList, this.page, this.searchCategory, this.searchText);
 
   MainPageData.initial()

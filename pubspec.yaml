@@ -27,6 +27,8 @@ dependencies:
   dio: "4.0.1 "
   get_it: "6.0.0"
   flutter_riverpod: ^1.0.0-dev.11
+  logger: ^1.1.0
+
 
 
 

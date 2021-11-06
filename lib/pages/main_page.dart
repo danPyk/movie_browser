@@ -16,10 +16,10 @@ final mainPageDataControllerProvider =
 });
 
 final selectedMoviePosterURLProvider = StateProvider<String?>((ref) {
+  //getting 'access'
   final _movies = ref.watch(mainPageDataControllerProvider).movieList!;
   return _movies.length != 0 ? _movies[0].posterUrl() : null;
 });
-
 
 class MainPage extends ConsumerWidget {
   static String id = "main_page";
@@ -32,7 +32,7 @@ class MainPage extends ConsumerWidget {
   late MainPageDataController _mainPageDataController;
   late MainPageData _mainPageData;
 
-  TextEditingController? _searchTextEditingController;
+  TextEditingController? _searchTextFieldController;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -43,10 +43,10 @@ class MainPage extends ConsumerWidget {
         ref.watch(mainPageDataControllerProvider.notifier);
     _mainPageData = ref.watch(mainPageDataControllerProvider);
 
-    _searchTextEditingController = TextEditingController();
     _selectedMoviePosterURL = ref.watch(selectedMoviePosterURLProvider);
 
-    _searchTextEditingController?.text = _mainPageData.searchText;
+    _searchTextFieldController = TextEditingController();
+    _searchTextFieldController?.text = _mainPageData.searchText;
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -66,22 +66,25 @@ class MainPage extends ConsumerWidget {
   }
 
   Widget _backgroundWidget() {
-    return Container(
-      height: _deviceWidth,
-      width: _deviceWidth,
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10.0),
-          image: DecorationImage(
-              image: NetworkImage(
-                  'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Image_created_with_a_mobile_phone.png/1024px-Image_created_with_a_mobile_phone.png'),
-              fit: BoxFit.cover)),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 15.0, sigmaY: 15.0),
-        child: Container(
-          decoration: BoxDecoration(color: Colors.black.withOpacity(0.2)),
+    if (_selectedMoviePosterURL.state != null) {
+      return Container(
+        height: _deviceWidth,
+        width: _deviceWidth,
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10.0),
+            image: DecorationImage(
+                image: NetworkImage(_selectedMoviePosterURL.state),
+                fit: BoxFit.cover)),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 15.0, sigmaY: 15.0),
+          child: Container(
+            decoration: BoxDecoration(color: Colors.black.withOpacity(0.2)),
+          ),
         ),
-      ),
-    );
+      );
+    } else {
+      return Container();
+    }
   }
 
   Widget _foregroundWidget() {
@@ -130,7 +133,7 @@ class MainPage extends ConsumerWidget {
       width: _deviceWidth! * 0.5,
       height: _deviceHeight! * 0.05,
       child: TextField(
-        controller: _searchTextEditingController,
+        controller: _searchTextFieldController,
         onSubmitted: (_input) =>
             _mainPageDataController.updateTextSearch(_input),
         style: TextStyle(color: Colors.white),
@@ -219,10 +222,9 @@ class MainPage extends ConsumerWidget {
                   _selectedMoviePosterURL.state = _movies[_count].posterUrl();
                 },
                 child: MovieTile(
-                   _deviceHeight! * 0.20,
-                   _deviceWidth! * 0.85,
+                  _deviceHeight! * 0.20,
+                  _deviceWidth! * 0.85,
                   _movies[_count],
-
                 ),
               ),
             );

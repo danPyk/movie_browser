@@ -17,28 +17,57 @@ class MainPageDataController extends StateNotifier<MainPageData> {
     try {
       List<Movie>? _movies = [];
 
-      if (state.searchCategory!.isNotEmpty) {
+      if (state.searchText.isEmpty) {
         if (state.searchCategory == SearchCategory.popular) {
-          _movies = await _movieService.getMovies('popular', page: state.page!);
+          _movies =
+              await (_movieService.getMovies('popular', page: state.page));
         } else if (state.searchCategory == SearchCategory.upcoming) {
           _movies =
-              await _movieService.getMovies('upcoming', page: state.page!);
-        } else if (state.searchCategory == SearchCategory.none) _movies = [];
+              await (_movieService.getMovies('upcoming', page: state.page));
+        } else if (state.searchCategory == SearchCategory.none) {
+          _movies = [];
+        }
       } else {
-        //perform text search
-        _movies = await _movieService.searchMovies(state.searchText);
+        _movies = await (_movieService.searchMovies(state.searchText));
       }
-      //everytime when somethings changing in state, state is updated
-      state =
-          state.copyWith(movies: [...?state.movieList, ...?_movies], page: state.page! + 1);
+      state = state.copyWith(
+          movies: [...state.movieList!, ..._movies!], page: state.page! + 1);
     } catch (e) {
       print(e);
     }
   }
 
+  // Future<void> getMovies() async {
+  //   try {
+  //      chooseFilterCategory();
+  //   } catch (e) {
+  //     print(e);
+  //   }
+  // }
+  //
+  // Future<void>  chooseFilterCategory() async {
+  //   List<Movie>? _movies = [];
+  //
+  //   if (state.searchCategory!.isNotEmpty) {
+  //     if (state.searchCategory == SearchCategory.popular) {
+  //       _movies = await _movieService.getMovies('popular', page: state.page!);
+  //     } else if (state.searchCategory == SearchCategory.upcoming) {
+  //       _movies = await _movieService.getMovies('upcoming', page: state.page!);
+  //     } else if (state.searchCategory == SearchCategory.none) _movies = [];
+  //   } else {
+  //     //perform text search
+  //     _movies = await _movieService.searchMovies(state.searchText);
+  //     //everytime when somethings changing in state, state is updated
+  //
+  //   }
+  //   state = state.copyWith(
+  //       movies: [...?state.movieList, ...?_movies], page: state.page! + 1);
+  // }
+
   void updateSearchCategory(String _category) {
     try {
-      state = state.copyWith(movies: [], page:  1,searchCategory:  _category, searchText: '');
+      state = state.copyWith(
+          movies: [], page: 1, searchCategory: _category, searchText: '');
       getMovies();
     } catch (e) {
       print(e);
@@ -47,7 +76,11 @@ class MainPageDataController extends StateNotifier<MainPageData> {
 
   void updateTextSearch(String _searchText) {
     try {
-      state = state.copyWith(movies: [],page:  1, searchCategory: SearchCategory.none,searchText:  _searchText);
+      state = state.copyWith(
+          movies: [],
+          page: 1,
+          searchCategory: SearchCategory.none,
+          searchText: _searchText);
       getMovies();
     } catch (e) {
       print(e);

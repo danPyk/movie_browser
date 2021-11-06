@@ -12,8 +12,8 @@ class MovieService {
     _httpService = getIt.get<HTTPService>();
   }
 
-  Future<List<Movie>?> getMovies(String criteria, {int? page}) async {
-    Response? _response = await _httpService.get('/movie/$criteria', query: {
+  Future<List<Movie>?> getMovies(String _searchCriteria, {int? page}) async {
+    Response? _response = await _httpService.get('/movie/$_searchCriteria', query: {
       'page': page,
     });
     if (_response!.statusCode == 200) {
@@ -23,13 +23,13 @@ class MovieService {
       }).toList();
       return _movies;
     } else {
-      throw Exception('Couldn\'t load popular movies.');
+      throw Exception('Couldn\'t load $_searchCriteria movies.');
     }
   }
 
-  Future<List<Movie>?> searchMovies(String? criteria, {int? page}) async {
+  Future<List<Movie>?> searchMovies(String? _searchCriteria, {int? page}) async {
     Response? _response = await _httpService.get('/search/movie', query: {
-      'query': criteria,
+      'query': _searchCriteria,
       'page': page,
     });
     if (_response!.statusCode == 200) {

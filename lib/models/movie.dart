@@ -21,12 +21,13 @@ class Movie {
       language: _json['original_language'],
       adult: _json['adult'],
       description: _json['overview'],
-      posterPath: 'https://image.tmdb.org/t/p/w500/'+_json['poster_path'],
+      posterPath: _json['poster_path'],
       backdropPath: _json['backdrop_path'],
       rating: _json['vote_average'],
       release: _json['release_date'],
     );
   }
+
 
   String posterUrl(){
     final AppConfig _appConfing = GetIt.instance.get<AppConfig>();

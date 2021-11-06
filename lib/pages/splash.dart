@@ -30,16 +30,23 @@ class _SplashPageState extends State<SplashPage> {
   }
 
   //make json globally usable
-//async, because accessing apple file storage need to be async
+  //async, because accessing apple file storage need to be async
   Future<void> _setup(BuildContext context) async {
     //loading data from file
-    final getIt = GetIt.instance;
 
     //load data from config file
     // rootBundle contains the resources that were packaged with the application when it was built.
     final configFile = await rootBundle.loadString('assets/config/main.json');
     //get data out of json and decode it
     final configData = jsonDecode(configFile);
+
+    createSingletons(configData);
+
+  }
+
+  void createSingletons(dynamic configData) async {
+    final getIt = GetIt.instance;
+
     //create singleton
     getIt.registerSingleton<AppConfig>(AppConfig(
         BASE_API_URL: configData['BASE_API_URL'],
@@ -48,7 +55,6 @@ class _SplashPageState extends State<SplashPage> {
 
     getIt.registerSingleton<HTTPService>(HTTPService());
     getIt.registerSingleton<MovieService>(MovieService());
-
   }
 
   @override
